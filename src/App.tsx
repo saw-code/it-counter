@@ -6,6 +6,24 @@ import {SetValue} from "./components/SetValue";
 
 function App() {
   const [increment, setIncrement] = useState<number>(0)
+  const [startValue, setStartValue] = useState(0)
+  const [maxValue, setMaxValue] = useState(1)
+
+  const setToLocalStorageHandler = () => {
+    localStorage.setItem('startValue', JSON.stringify(startValue))
+    localStorage.setItem('maxValue', JSON.stringify(maxValue))
+  }
+
+  const getFromLocalHandler = () => {
+    let startValueAsString = localStorage.getItem('startValue')
+    let maxValueAsString = localStorage.getItem('maxValue')
+    if (startValueAsString && maxValueAsString) {
+      let newStartValue = JSON.parse(startValueAsString)
+      let newMaxValue = JSON.parse(maxValueAsString)
+      setStartValue(newStartValue)
+      setMaxValue(newMaxValue)
+    }
+  }
 
   const changeIncrement = () => {
     setIncrement(increment + 1)
@@ -18,7 +36,11 @@ function App() {
   return (
     <>
       <div>
-        <SetValue/>
+        <SetValue set={setToLocalStorageHandler}
+                  get={getFromLocalHandler}
+                  startValue={startValue}
+                  maxValue={maxValue}
+        />
       </div>
 
       <div className="App">
