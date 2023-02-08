@@ -1,16 +1,20 @@
-import React from 'react';
-import {UniversalButton} from "./UniversalButton";
+import React, {ChangeEvent} from 'react';
 
 type SetValuePropsType = {
-  set: () => void
-  get: () => void
+  setStart: (startValue: number) => void
+  setMax: (maxValue: number) => void
   startValue: number
-  maxValue:number
+  maxValue: number
 }
 
 export const SetValue = (props: SetValuePropsType) => {
-  const getValueFromLocalStorage = () => {
-    props.get()
+
+  const onChangeMaxValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    props.setMax(event.currentTarget.valueAsNumber)
+  }
+
+  const onChangeStartValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    props.setStart(event.currentTarget.valueAsNumber)
   }
 
   return (
@@ -18,18 +22,14 @@ export const SetValue = (props: SetValuePropsType) => {
       <div>
         <div>
           max value:
-          <input type="number" />
+          <input value={props.maxValue} onChange={onChangeMaxValueHandler} type="number" />
         </div>
         <div>
           start value:
-          <input type="number"/>
+          <input value={props.startValue} onChange={onChangeStartValueHandler} type="number"/>
         </div>
       </div>
-      <div>
-        <UniversalButton titleName={"set"}
-                         callBack={getValueFromLocalStorage}
-                         disabled={props.startValue >= props.maxValue || (props.startValue && props.maxValue) < 0 }/>
-      </div>
+
     </div>
   );
 };
