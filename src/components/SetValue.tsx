@@ -5,16 +5,23 @@ type SetValuePropsType = {
   setMax: (maxValue: number) => void
   startValue: number
   maxValue: number
+  setDisabledState: (disabledState: boolean) => void
 }
 
 export const SetValue = (props: SetValuePropsType) => {
 
   const onChangeMaxValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
     props.setMax(event.currentTarget.valueAsNumber)
+    if (event) {
+      props.setDisabledState(true)
+    }
   }
 
   const onChangeStartValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
     props.setStart(event.currentTarget.valueAsNumber)
+    if (event) {
+      props.setDisabledState(true)
+    }
   }
 
   return (
