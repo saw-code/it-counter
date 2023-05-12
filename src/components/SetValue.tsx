@@ -1,26 +1,26 @@
 import React, {ChangeEvent} from 'react';
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootStateType} from "../store/store";
+import {InitialStateTypes, setDisabledStateAC, setMaxAC, setStartAC} from "../store/count-reducer";
 
-type SetValuePropsType = {
-  setStart: (startValue: number) => void
-  setMax: (maxValue: number) => void
-  startValue: number
-  maxValue: number
-  setDisabledState: (disabledState: boolean) => void
-}
 
-export const SetValue = (props: SetValuePropsType) => {
+export const SetValue = () => {
+
+  const count = useSelector<AppRootStateType, InitialStateTypes>(state => state.count)
+
+  const dispatch = useDispatch()
 
   const onChangeMaxValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    props.setMax(event.currentTarget.valueAsNumber)
+    dispatch(setMaxAC(event.currentTarget.valueAsNumber))
     if (event) {
-      props.setDisabledState(true)
+      dispatch(setDisabledStateAC(true))
     }
   }
 
   const onChangeStartValueHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    props.setStart(event.currentTarget.valueAsNumber)
+    dispatch(setStartAC(event.currentTarget.valueAsNumber))
     if (event) {
-      props.setDisabledState(true)
+      dispatch(setDisabledStateAC(true))
     }
   }
 
@@ -29,11 +29,11 @@ export const SetValue = (props: SetValuePropsType) => {
       <div>
         <div>
           max value:
-          <input value={props.maxValue} onChange={onChangeMaxValueHandler} type="number" />
+          <input value={count.maxValue} onChange={onChangeMaxValueHandler} type="number" />
         </div>
         <div>
           start value:
-          <input value={props.startValue} onChange={onChangeStartValueHandler} type="number"/>
+          <input value={count.startValue} onChange={onChangeStartValueHandler} type="number"/>
         </div>
       </div>
 

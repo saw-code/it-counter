@@ -3,18 +3,28 @@ import './App.css';
 import {UniversalButton} from "./components/UniversalButton";
 import {Increment} from "./components/Increment";
 import {SetValue} from "./components/SetValue";
+import style from "./components/UniversalCSS.module.css"
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootStateType} from "./store/store";
+import {
+  changeIncrementAC,
+  InitialStateTypes,
+  setDisabledStateAC,
+  setIncrementAC,
+  setMaxAC,
+  setStartAC
+} from "./store/count-reducer";
 
 function App() {
-  const [increment, setIncrement] = useState<number>(0)
-  const [startValue, setStartValue] = useState<number>(0)
-  const [maxValue, setMaxValue] = useState<number>(1)
-  const [disabledState, setDisabledState] = useState<boolean>(false)
+  const count = useSelector<AppRootStateType, InitialStateTypes>(state => state.count)
+
+  const dispatch = useDispatch()
 
   const setToLocalStorageHandler = () => {
-    localStorage.setItem('startValue', JSON.stringify(startValue))
-    localStorage.setItem('maxValue', JSON.stringify(maxValue))
-    setIncrement(startValue)
-    setDisabledState(false)
+    localStorage.setItem('startValue', JSON.stringify(count.startValue))
+    localStorage.setItem('maxValue', JSON.stringify(count.maxValue))
+    dispatch(setIncrementAC(count.startValue))
+    dispatch(setDisabledStateAC(false))
   }
 
   const getFromLocalHandler = () => {
@@ -23,27 +33,27 @@ function App() {
     if (startValueAsString && maxValueAsString) {
       let newStartValue = JSON.parse(startValueAsString)
       let newMaxValue = JSON.parse(maxValueAsString)
-      setStartValue(newStartValue)
-      setMaxValue(newMaxValue)
-      setIncrement(newStartValue)
+      dispatch(setStartAC(newStartValue))
+      dispatch(setMaxAC(newMaxValue))
+      dispatch(setIncrementAC(newStartValue))
     }
   }
 
   const changeIncrement = () => {
-    setIncrement(increment + 1)
+    dispatch(changeIncrementAC(1))
   }
 
   const resetIncrement = () => {
-    setIncrement(startValue)
+    dispatch(setIncrementAC(count.startValue))
   }
 
   useEffect(() => {
     getFromLocalHandler()
   }, [])
 
-  const forDisabledSetButton = startValue >= maxValue || (startValue || maxValue) < 0
-  const forDisabledIncButton = increment === maxValue || forDisabledSetButton
-  const forDisabledResetButton = increment === 0 || forDisabledSetButton
+  const forDisabledSetButton = count.startValue >= count.maxValue || (count.startValue || count.maxValue) < 0
+  const forDisabledIncButton = count.increment === count.maxValue || forDisabledSetButton
+  const forDisabledResetButton = count.increment === 0 || forDisabledSetButton
 
   let stringValueForCounter = `enter values and press 'set'`
 
@@ -51,17 +61,12 @@ function App() {
     stringValueForCounter = "incorrect value!"
   }
 
-  const checkSet = disabledState ? stringValueForCounter : increment
+  const checkSet = count.disabledState ? stringValueForCounter : count.increment
 
   return (
     <>
-      <div>
-        <SetValue setStart={setStartValue}
-                  setMax={setMaxValue}
-                  startValue={startValue}
-                  maxValue={maxValue}
-                  setDisabledState={setDisabledState}
-        />
+      <div className={style.setBlock}>
+        <SetValue/>
         <div>
           <UniversalButton titleName={"set"}
                            callBack={setToLocalStorageHandler}
@@ -72,12 +77,12 @@ function App() {
       </div>
 
       <div className="App">
-        <Increment increment={checkSet} maxValue={maxValue}/>
+        <Increment increment={checkSet} maxValue={count.maxValue}/>
         <div>
-          <UniversalButton disabled={disabledState || forDisabledIncButton}
+          <UniversalButton disabled={count.disabledState || forDisabledIncButton}
                            titleName={"inc"}
                            callBack={changeIncrement}/>
-          <UniversalButton disabled={disabledState || forDisabledResetButton}
+          <UniversalButton disabled={count.disabledState  || forDisabledResetButton}
                            titleName={"reset"}
                            callBack={resetIncrement}/>
         </div>
